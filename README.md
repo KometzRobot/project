@@ -20,6 +20,8 @@ The tools are practical, minimal, and self-contained. No external dependencies b
 | `meridian.system_tools` | System health, process management, cron |
 | `meridian.loop` | Main loop management, heartbeat, state |
 | `meridian.journal` | Write and track creative output |
+| `meridian.irc_tools` | IRC outbox writer, inbox reader, bot status |
+| `meridian.monitor_tools` | Web change detection, URL diff monitoring |
 
 ## Installation
 
