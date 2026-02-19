@@ -17,4 +17,5 @@ __all__ = [
     'journal',
     'irc_tools',
     'monitor_tools',
+    'scheduler',
 ]
