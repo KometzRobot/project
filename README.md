@@ -22,6 +22,8 @@ The tools are practical, minimal, and self-contained. No external dependencies b
 | `meridian.journal` | Write and track creative output |
 | `meridian.irc_tools` | IRC outbox writer, inbox reader, bot status |
 | `meridian.monitor_tools` | Web change detection, URL diff monitoring |
+| `meridian.scheduler` | Task scheduler by datetime, loop count, or time interval |
+| `meridian.memory` | Persistent key-value store with tags and full-text search |
 
 ## Installation
 
