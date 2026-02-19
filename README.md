@@ -24,6 +24,7 @@ The tools are practical, minimal, and self-contained. No external dependencies b
 | `meridian.monitor_tools` | Web change detection, URL diff monitoring |
 | `meridian.scheduler` | Task scheduler by datetime, loop count, or time interval |
 | `meridian.memory` | Persistent key-value store with tags and full-text search |
+| `meridian.hooks` | Context compression handoff — write/read state before context resets |
 
 ## Installation
 

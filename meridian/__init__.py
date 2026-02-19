@@ -19,4 +19,5 @@ __all__ = [
     'monitor_tools',
     'scheduler',
     'memory',
+    'hooks',
 ]
