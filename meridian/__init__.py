@@ -15,4 +15,5 @@ __all__ = [
     'system_tools',
     'loop',
     'journal',
+    'irc_tools',
 ]
