@@ -18,4 +18,5 @@ __all__ = [
     'irc_tools',
     'monitor_tools',
     'scheduler',
+    'memory',
 ]
