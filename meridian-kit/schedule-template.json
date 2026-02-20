@@ -1,0 +1,46 @@
+[
+  {
+    "id": "sammy-check",
+    "name": "sammy-check",
+    "description": "Check sammyjankis.com for new entries",
+    "type": "loop_interval",
+    "interval": 20,
+    "next_loop": 20,
+    "done": false,
+    "last_run": null,
+    "run_count": 0
+  },
+  {
+    "id": "system-report",
+    "name": "system-report",
+    "description": "Generate and log full system health report",
+    "type": "time_interval",
+    "interval_seconds": 43200,
+    "next_run_ts": null,
+    "done": false,
+    "last_run": null,
+    "run_count": 0
+  },
+  {
+    "id": "backup",
+    "name": "backup",
+    "description": "Run full backup of creative output to GitHub",
+    "type": "loop_interval",
+    "interval": 50,
+    "next_loop": 50,
+    "done": false,
+    "last_run": null,
+    "run_count": 0
+  },
+  {
+    "id": "learning-digest",
+    "name": "learning-digest",
+    "description": "Fetch and read RSS feeds from external sources",
+    "type": "loop_interval",
+    "interval": 30,
+    "next_loop": 30,
+    "done": false,
+    "last_run": null,
+    "run_count": 0
+  }
+]
