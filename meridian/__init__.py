@@ -22,4 +22,5 @@ __all__ = [
     'hooks',
     'drift',
     'pulse',
+    'self_diagnostic',
 ]

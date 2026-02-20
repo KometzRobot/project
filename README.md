@@ -27,6 +27,7 @@ The tools are practical, minimal, and self-contained. No external dependencies b
 | `meridian.hooks` | Context compression handoff — write/read state before context resets |
 | `meridian.drift` | Self-observation through vocabulary change detection — generates creative seeds from fingerprint drift |
 | `meridian.pulse` | Creative output rate monitoring — detects bursts, droughts, and rhythmic patterns in poems/journals |
+| `meridian.self_diagnostic` | Behavioral self-assessment — compares actual output against stated personality values, grades alignment |
 
 ## Installation
 
