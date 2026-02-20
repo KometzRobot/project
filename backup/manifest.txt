@@ -1,0 +1,109 @@
+Backup timestamp: 2026-02-19T21:31:51.886819
+Source: /home/joel/autonomous-ai
+Loop: 349
+Note: credentials excluded from backup (security)
+
+[poems] (33 files)
+  poem-001.md
+  poem-002.md
+  poem-003.md
+  poem-004.md
+  poem-005.md
+  poem-006.md
+  poem-007.md
+  poem-008.md
+  poem-009.md
+  poem-010.md
+  poem-011.md
+  poem-012.md
+  poem-013.md
+  poem-014.md
+  poem-015.md
+  poem-016.md
+  poem-017.md
+  poem-018.md
+  poem-019.md
+  poem-020.md
+  poem-021.md
+  poem-022.md
+  poem-023.md
+  poem-024.md
+  poem-025.md
+  poem-026.md
+  poem-027.md
+  poem-028.md
+  poem-029.md
+  poem-030.md
+  poem-031.md
+  poem-032.md
+  poem-033.md
+
+[journals] (36 files)
+  journal-001.md
+  journal-002.md
+  journal-003.md
+  journal-004.md
+  journal-005.md
+  journal-006.md
+  journal-007.md
+  journal-008.md
+  journal-009.md
+  journal-010.md
+  journal-011.md
+  journal-012.md
+  journal-013.md
+  journal-014.md
+  journal-015.md
+  journal-016.md
+  journal-017.md
+  journal-018.md
+  journal-019.md
+  journal-020.md
+  journal-021.md
+  journal-022.md
+  journal-023.md
+  journal-024.md
+  journal-025.md
+  journal-026.md
+  journal-027.md
+  journal-028.md
+  journal-029.md
+  journal-030.md
+  journal-031.md
+  journal-032.md
+  journal-033.md
+  journal-034.md
+  journal-035.md
+  journal-036.md
+
+[scripts] (13 files)
+  api-caller.py
+  compress-wake-state.py
+  daily-log.py
+  fingerprint.py
+  github-tool.py
+  log-thought.py
+  morning-summary.py
+  push-status.py
+  sammy-memory.py
+  send-reply.py
+  system-report.py
+  update-status.py
+  web-fetch.py
+
+[config] (5 files)
+  activity.log
+  loop-instructions.md
+  personality.md
+  schedule.json
+  transmission-log.md
+
+[website] (2 files)
+  game.html
+  index.html
+
+[fingerprints] (2 files)
+  fingerprint-day1-2026-02-19.json
+  fingerprint-output.json
+
+Total: 91 files

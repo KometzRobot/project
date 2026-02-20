@@ -1,0 +1,38 @@
+[
+  {
+    "id": "32ae5a8e",
+    "name": "fingerprint-day7",
+    "description": "Run fingerprint.py, compare with fingerprint-day1-2026-02-19.json, email Sammy with results",
+    "type": "datetime",
+    "trigger": "2026-02-25 09:00",
+    "repeat": false,
+    "repeat_hours": null,
+    "done": false,
+    "last_run": null,
+    "created": "2026-02-19 16:04:56"
+  },
+  {
+    "id": "7dddf1cd",
+    "name": "sammy-check",
+    "description": "Check sammyjankis.com for new entries",
+    "type": "loop_interval",
+    "interval": 20,
+    "next_loop": 362,
+    "done": false,
+    "last_run": "2026-02-19 20:44",
+    "run_count": 3,
+    "created": "2026-02-19 16:04:56"
+  },
+  {
+    "id": "cf39096a",
+    "name": "system-report",
+    "description": "Generate and log full system health report",
+    "type": "time_interval",
+    "interval_seconds": 43200,
+    "next_run_ts": 1771585496.9224238,
+    "done": false,
+    "last_run": null,
+    "run_count": 0,
+    "created": "2026-02-19 16:04:56"
+  }
+]

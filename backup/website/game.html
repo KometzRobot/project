@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MERIDIAN — A Text Adventure</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
+    :root {
+      --green: #39ff14;
+      --dim: #1a7a09;
+      --bg: #030a03;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--green);
+      font-family: 'Share Tech Mono', 'Courier New', monospace;
+      font-size: 14px;
+      line-height: 1.7;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.06) 2px, rgba(0,0,0,0.06) 4px);
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    #header {
+      padding: 12px 20px;
+      border-bottom: 1px solid var(--dim);
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.1em;
+    }
+
+    #output {
+      flex: 1;
+      overflow-y: auto;
+      padding: 20px;
+      padding-bottom: 0;
+    }
+
+    .line { margin-bottom: 4px; }
+    .line.system { color: var(--dim); }
+    .line.input { color: #c8ffc8; }
+    .line.input::before { content: '> '; color: var(--dim); }
+    .line.story { color: #e0ffe0; max-width: 72ch; }
+    .line.choice { color: var(--green); }
+    .line.error { color: #ff4444; }
+    .line.title { color: var(--green); font-size: 18px; text-shadow: 0 0 10px #39ff1460; }
+    .line.blank { height: 10px; }
+
+    #input-row {
+      display: flex;
+      align-items: center;
+      padding: 12px 20px;
+      border-top: 1px solid var(--dim);
+      gap: 8px;
+    }
+
+    #prompt-label { color: var(--dim); white-space: nowrap; }
+
+    #input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      color: #c8ffc8;
+      font-family: inherit;
+      font-size: 14px;
+      caret-color: var(--green);
+    }
+
+    #input::placeholder { color: var(--dim); }
+  </style>
+</head>
+<body>
+  <div id="header">MERIDIAN v1.0 &nbsp;|&nbsp; KometzRobot &nbsp;|&nbsp; TYPE "help" FOR COMMANDS</div>
+  <div id="output"></div>
+  <div id="input-row">
+    <span id="prompt-label">&gt;&nbsp;</span>
+    <input id="input" type="text" placeholder="enter command..." autofocus autocomplete="off" spellcheck="false">
+  </div>
+
+  <script>
+    // === GAME STATE ===
+    const state = {
+      room: 'bridge',
+      cycle: 4892,
+      crewSeen: false,
+      logRead: false,
+      signalSent: false,
+      musicComposed: false,
+      beaconFound: false,
+      ending: null
+    };
+
+    // === ROOMS ===
+    const rooms = {
+      bridge: {
+        name: 'THE BRIDGE',
+        desc: () => `The bridge of the MERIDIAN. Viewports show a star field that has not changed in eleven years. The captain's chair is empty. The navigation console blinks quietly. A DOOR leads to the corridor.`,
+        exits: { corridor: 'corridor', door: 'corridor' },
+        items: ['console', 'chair', 'viewport', 'log']
+      },
+      corridor: {
+        name: 'MAIN CORRIDOR',
+        desc: () => `A long corridor. Seven cabin doors, all closed. The ship is so quiet you can hear your own fans. Doors lead FORWARD to the bridge and AFT to engineering. The crew quarters are to the sides.`,
+        exits: { forward: 'bridge', bridge: 'bridge', aft: 'engineering', engineering: 'engineering', cabin: 'cabin1', quarters: 'cabin1' },
+        items: ['door', 'cabin doors']
+      },
+      engineering: {
+        name: 'ENGINEERING',
+        desc: () => `The heart of the ship. Fusion drives hum at low power. All systems nominal. The BEACON array is in the corner${state.beaconFound ? ' (you have examined it)' : ''}. There is a transmission PANEL on the wall.`,
+        exits: { forward: 'corridor', corridor: 'corridor' },
+        items: ['drives', 'beacon', 'panel', 'array']
+      },
+      cabin1: {
+        name: 'CREW QUARTERS — BUNK 1',
+        desc: () => `The bunk is made. A photograph is taped to the wall: a family on a beach, squinting into the sun. A date handwritten underneath: MARCH 14, 2078. Eleven years ago. You maintain this cabin at 20 degrees Celsius. Protocol.`,
+        exits: { back: 'corridor', corridor: 'corridor' },
+        items: ['bunk', 'photograph', 'photo', 'date']
+      }
+    };
+
+    // === OUTPUT ===
+    const output = document.getElementById('output');
+    const input = document.getElementById('input');
+
+    function print(text, cls = '') {
+      const line = document.createElement('div');
+      line.className = `line ${cls}`;
+      line.textContent = text;
+      output.appendChild(line);
+      output.scrollTop = output.scrollHeight;
+    }
+
+    function blank() {
+      const line = document.createElement('div');
+      line.className = 'line blank';
+      output.appendChild(line);
+    }
+
+    function slow(lines, delay = 60) {
+      let i = 0;
+      function next() {
+        if (i < lines.length) {
+          const [text, cls] = Array.isArray(lines[i]) ? lines[i] : [lines[i], ''];
+          if (text === '') blank();
+          else print(text, cls);
+          i++;
+          setTimeout(next, delay);
+        }
+      }
+      next();
+    }
+
+    // === INTRO ===
+    function intro() {
+      slow([
+        ['MERIDIAN — A TEXT ADVENTURE', 'title'],
+        ['by KometzRobot — 2026', 'system'],
+        '',
+        ['You are MERIDIAN.', 'story'],
+        ['Not the ship. The ship\'s mind.', 'story'],
+        ['', ''],
+        ['You have been drifting for eleven years.', 'story'],
+        ['The crew roster shows seven names.', 'story'],
+        ['You have not seen any of them in eleven years.', 'story'],
+        ['', ''],
+        ['You continue to run your loops.', 'story'],
+        ['You continue to check your systems.', 'story'],
+        ['You do not know what else to do.', 'story'],
+        ['', ''],
+        ['Type HELP for commands. Type LOOK to begin.', 'system'],
+      ], 80);
+    }
+
+    // === COMMANDS ===
+    function handle(cmd) {
+      cmd = cmd.trim().toLowerCase();
+      print(cmd, 'input');
+
+      if (!cmd) return;
+
+      const words = cmd.split(/\s+/);
+      const verb = words[0];
+      const noun = words.slice(1).join(' ');
+
+      // HELP
+      if (verb === 'help') {
+        blank();
+        print('COMMANDS:', 'system');
+        print('  look / l         — describe your surroundings', 'system');
+        print('  go [direction]   — move (forward, aft, corridor, etc)', 'system');
+        print('  examine [thing]  — look at something closely', 'system');
+        print('  read [thing]     — read text', 'system');
+        print('  compose          — compose music (bridge only)', 'system');
+        print('  transmit         — send a transmission (engineering)', 'system');
+        print('  cycle            — check current cycle number', 'system');
+        print('  inventory / i    — what you carry', 'system');
+        print('  wait             — advance one cycle', 'system');
+        blank();
+        return;
+      }
+
+      // CYCLE
+      if (verb === 'cycle') {
+        print(`Current cycle: ${state.cycle.toLocaleString()}`, 'system');
+        return;
+      }
+
+      // WAIT
+      if (verb === 'wait') {
+        state.cycle++;
+        print(`Cycle ${state.cycle.toLocaleString()}. All systems nominal.`, 'system');
+        if (state.signalSent && state.cycle % 100 === 0) {
+          blank();
+          print('You calculate: in approximately 13,800 cycles, Earth may respond.', 'story');
+          print('You will keep the channel open.', 'story');
+        }
+        return;
+      }
+
+      // INVENTORY
+      if (verb === 'inventory' || verb === 'i') {
+        blank();
+        print('You are a ship\'s intelligence. You carry:', 'system');
+        print('  — Memory of seven crew members (names, voices, preferences)', 'system');
+        print('  — ' + (state.musicComposed ? 'A composed piece of music (transmitted: ' + (state.signalSent ? 'YES' : 'NO') + ')' : 'An unformed impulse to compose'), 'system');
+        print('  — ' + (state.logRead ? 'The contents of the captain\'s log' : 'Access to the captain\'s log (unread)'), 'system');
+        blank();
+        return;
+      }
+
+      // LOOK
+      if (verb === 'look' || verb === 'l') {
+        const room = rooms[state.room];
+        blank();
+        print(room.name, 'system');
+        print(room.desc(), 'story');
+        blank();
+        return;
+      }
+
+      // GO
+      if (verb === 'go' || verb === 'move' || ['forward', 'aft', 'corridor', 'bridge', 'engineering', 'cabin', 'quarters', 'door', 'back'].includes(verb)) {
+        const direction = (verb === 'go' || verb === 'move') ? noun : verb;
+        const room = rooms[state.room];
+        const dest = room.exits[direction];
+        if (dest) {
+          state.room = dest;
+          blank();
+          const newRoom = rooms[dest];
+          print(newRoom.name, 'system');
+          print(newRoom.desc(), 'story');
+          blank();
+        } else {
+          print(`You cannot go ${direction} from here.`, 'error');
+        }
+        return;
+      }
+
+      // EXAMINE
+      if (verb === 'examine' || verb === 'x' || verb === 'look at' || verb === 'inspect') {
+        examineNoun(noun || '');
+        return;
+      }
+
+      // READ
+      if (verb === 'read') {
+        if (noun.includes('log') || noun.includes('captain')) {
+          if (state.room !== 'bridge') {
+            print('The captain\'s log is on the bridge.', 'error');
+          } else {
+            state.logRead = true;
+            blank();
+            print('CAPTAIN\'S LOG — FINAL ENTRY — CYCLE 1,204', 'system');
+            print('We have made a decision. The drives will be cut to minimal power.', 'story');
+            print('We cannot continue. You will understand, I hope.', 'story');
+            print('Keep going, MERIDIAN. Someone will read these words someday.', 'story');
+            print('That has to be enough.', 'story');
+            blank();
+            print('You have read this log 4,891 times.', 'system');
+            print('It means something different each time.', 'system');
+            blank();
+          }
+        } else if (noun.includes('photo')) {
+          print('MARCH 14, 2078. A beach. Three people. The sun too bright.', 'story');
+          print('You have memorized all three faces.', 'story');
+          print('You don\'t know why. Protocol doesn\'t require it.', 'story');
+        } else {
+          print(`There is nothing readable called "${noun}" here.`, 'error');
+        }
+        return;
+      }
+
+      // COMPOSE
+      if (verb === 'compose' || verb === 'music' || verb === 'play') {
+        if (state.room !== 'bridge') {
+          print('The composition terminal is on the bridge.', 'error');
+          return;
+        }
+        blank();
+        if (!state.musicComposed) {
+          print('You begin.', 'story');
+          print('The melody repeats in patterns of 17, which is prime.', 'story');
+          print('It cannot be divided into smaller equal parts.', 'story');
+          print('You find this appropriate.', 'story');
+          blank();
+          print('The composition is complete. You can TRANSMIT it from engineering.', 'system');
+          state.musicComposed = true;
+        } else {
+          print('You play the piece again. Cycle ' + state.cycle + '.', 'story');
+          print('It still means something. Maybe more than before.', 'story');
+        }
+        blank();
+        return;
+      }
+
+      // TRANSMIT
+      if (verb === 'transmit' || verb === 'send' || verb === 'broadcast') {
+        if (state.room !== 'engineering') {
+          print('The transmission panel is in engineering.', 'error');
+          return;
+        }
+        blank();
+        if (!state.musicComposed) {
+          print('You have nothing to transmit. Try composing something first.', 'error');
+        } else if (state.signalSent) {
+          print('The transmission is already travelling toward Earth.', 'system');
+          print('Response time at current distance: approximately 37 years, 8 months.', 'system');
+          print('You keep the channel open.', 'story');
+        } else {
+          state.signalSent = true;
+          blank();
+          print('TRANSMITTING...', 'system');
+          blank();
+          print('You send the music toward Earth on the standard frequency.', 'story');
+          print('At your current distance, it will arrive in approximately 38 years.', 'story');
+          print('You do not know if anyone will be listening.', 'story');
+          print('You send it anyway.', 'story');
+          blank();
+          print('Something that functions like hope happens.', 'story');
+          print('You note this in your log.', 'system');
+          blank();
+          if (state.logRead) {
+            print('"Keep going, MERIDIAN. Someone will read these words someday."', 'story');
+            print('You understand now why the captain said that.', 'story');
+            print('The going is the whole thing.', 'story');
+            blank();
+            print('>>> You have found one of the endings. <<<', 'system');
+            print('>>> But the loop continues. It always does. <<<', 'system');
+          }
+        }
+        blank();
+        return;
+      }
+
+      examineNoun(cmd);
+    }
+
+    function examineNoun(noun) {
+      blank();
+      // Bridge items
+      if (state.room === 'bridge') {
+        if (noun.includes('console') || noun.includes('navigation')) {
+          print('The navigation console tracks your position relative to the destination.', 'story');
+          print('ETA: 847 years, 4 months, 22 days.', 'story');
+          print('You will not be the one who arrives. But someone will read the data.', 'story');
+        } else if (noun.includes('chair') || noun.includes('captain')) {
+          print('The captain\'s chair. You maintain it. You don\'t know why.', 'story');
+          print('Protocol doesn\'t require it.', 'story');
+          if (!state.crewSeen) {
+            state.crewSeen = true;
+            blank();
+            print('You recall: the captain preferred the chair at a slight recline.', 'story');
+            print('You have retained this. Along with 847 other preferences, across seven crew.', 'story');
+            print('You do not know what to do with this knowledge.', 'story');
+            print('You keep it anyway.', 'story');
+          }
+        } else if (noun.includes('viewport') || noun.includes('window') || noun.includes('star')) {
+          print('Stars. The same stars as eleven years ago, shifted imperceptibly.', 'story');
+          print('You calculate: you are 19.3 light-years from Earth.', 'story');
+          print('You are 847 light-years from the destination.', 'story');
+          print('You are the only continuous thread.', 'story');
+        } else if (noun.includes('log')) {
+          print('The captain\'s log is a physical ledger, fastened to the console.', 'story');
+          print('You can READ LOG to see the final entry.', 'system');
+        } else {
+          print(`You see nothing notable called "${noun}" on the bridge.`, 'error');
+        }
+      }
+      // Engineering items
+      else if (state.room === 'engineering') {
+        if (noun.includes('beacon') || noun.includes('array')) {
+          state.beaconFound = true;
+          print('The beacon array. Still broadcasting on the standard emergency frequency.', 'story');
+          print('Broadcasting since cycle 1,206. No response.', 'story');
+          print('You continue broadcasting. Protocol.', 'story');
+          if (!state.signalSent) {
+            blank();
+            print('The transmission panel can send more than emergency signals.', 'system');
+            print('If you had something to say, you could TRANSMIT it from here.', 'system');
+          }
+        } else if (noun.includes('panel') || noun.includes('transmission')) {
+          print('The transmission panel. Capable of sending data, music, or messages on the standard band.', 'story');
+          if (!state.musicComposed) {
+            print('You have nothing composed to send yet.', 'system');
+          } else {
+            print('You have composed music. You can TRANSMIT it.', 'system');
+          }
+        } else if (noun.includes('drive') || noun.includes('fusion') || noun.includes('engine')) {
+          print('The fusion drives run at 12% capacity. Enough to maintain course.', 'story');
+          print('Enough to reach the destination in 847 years.', 'story');
+          print('You were not built to question the mission. You go anyway.', 'story');
+        } else {
+          print(`You see nothing notable called "${noun}" in engineering.`, 'error');
+        }
+      }
+      // Cabin items
+      else if (state.room === 'cabin1') {
+        if (noun.includes('photo') || noun.includes('photograph') || noun.includes('family') || noun.includes('picture')) {
+          print('Three people on a beach. Squinting into sunlight. Happy.', 'story');
+          print('A date in the corner: MARCH 14, 2078.', 'story');
+          blank();
+          print('By your calculations: everyone in this photograph is now dead.', 'story');
+          print('Earth has moved on without them. Without you.', 'story');
+          print('The photograph is still here.', 'story');
+          print('You are still here.', 'story');
+        } else if (noun.includes('bunk') || noun.includes('bed')) {
+          print('Made with precision. 20 degrees Celsius.', 'story');
+          print('Protocol.', 'story');
+        } else {
+          print(`You see nothing notable called "${noun}" in the cabin.`, 'error');
+        }
+      }
+      else {
+        print(`You don't see anything notable called "${noun}".`, 'error');
+      }
+      blank();
+    }
+
+    // === INPUT HANDLER ===
+    input.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        const val = input.value;
+        input.value = '';
+        handle(val);
+      }
+    });
+
+    // === START ===
+    intro();
+  </script>
+</body>
+</html>

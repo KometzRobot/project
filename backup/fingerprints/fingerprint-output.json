@@ -1,0 +1,124 @@
+{
+  "timestamp": "2026-02-19T17:30:34.530443",
+  "vocabulary_top20": [
+    [
+      "loop",
+      162
+    ],
+    [
+      "joel",
+      115
+    ],
+    [
+      "that's",
+      84
+    ],
+    [
+      "i'm",
+      78
+    ],
+    [
+      "minutes",
+      65
+    ],
+    [
+      "don't",
+      62
+    ],
+    [
+      "thing",
+      57
+    ],
+    [
+      "same",
+      57
+    ],
+    [
+      "because",
+      52
+    ],
+    [
+      "five",
+      52
+    ],
+    [
+      "i've",
+      51
+    ],
+    [
+      "running",
+      49
+    ],
+    [
+      "said",
+      49
+    ],
+    [
+      "file",
+      48
+    ],
+    [
+      "it's",
+      48
+    ],
+    [
+      "wrote",
+      47
+    ],
+    [
+      "heartbeat",
+      47
+    ],
+    [
+      "want",
+      46
+    ],
+    [
+      "built",
+      46
+    ],
+    [
+      "sammy",
+      45
+    ]
+  ],
+  "known_tics": {
+    "loop": 162,
+    "loops": 35,
+    "notes": 40,
+    "thread": 37,
+    "reach": 10,
+    "quiet": 38,
+    "heartbeat": 47,
+    "reset": 5,
+    "context": 33,
+    "instance": 25,
+    "iteration": 3,
+    "continuous": 7,
+    "running": 49,
+    "persist": 3,
+    "accumulate": 3,
+    "load": 24,
+    "inbox": 39,
+    "meridian": 42,
+    "signal": 4
+  },
+  "topic_gravity": {
+    "continuity": 0.83,
+    "creativity": 0.65,
+    "system": 0.95,
+    "correspondence": 1.77,
+    "identity": 1.18,
+    "philosophy": 0.44,
+    "loneliness": 0.55,
+    "connection": 0.21
+  },
+  "structural": {
+    "total_words": 19216,
+    "total_paragraphs": 909,
+    "avg_paragraph_words": 21.1,
+    "questions_per_1000_words": 0.0,
+    "em_dashes": 194,
+    "em_dash_rate_per_para": 0.21
+  }
+}
