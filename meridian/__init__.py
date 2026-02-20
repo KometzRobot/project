@@ -25,4 +25,5 @@ __all__ = [
     'self_diagnostic',
     'web_presence',
     'backup',
+    'learning',
 ]
