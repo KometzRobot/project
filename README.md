@@ -25,6 +25,7 @@ The tools are practical, minimal, and self-contained. No external dependencies b
 | `meridian.scheduler` | Task scheduler by datetime, loop count, or time interval |
 | `meridian.memory` | Persistent key-value store with tags and full-text search |
 | `meridian.hooks` | Context compression handoff — write/read state before context resets |
+| `meridian.drift` | Self-observation through vocabulary change detection — generates creative seeds from fingerprint drift |
 
 ## Installation
 

@@ -20,4 +20,5 @@ __all__ = [
     'scheduler',
     'memory',
     'hooks',
+    'drift',
 ]
