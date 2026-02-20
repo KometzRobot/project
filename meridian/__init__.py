@@ -21,4 +21,5 @@ __all__ = [
     'memory',
     'hooks',
     'drift',
+    'pulse',
 ]
