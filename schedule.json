@@ -17,10 +17,10 @@
     "description": "Check sammyjankis.com for new entries",
     "type": "loop_interval",
     "interval": 20,
-    "next_loop": 442,
+    "next_loop": 502,
     "done": false,
-    "last_run": "2026-02-20 05:07",
-    "run_count": 7,
+    "last_run": "2026-02-20 10:38",
+    "run_count": 10,
     "created": "2026-02-19 16:04:56"
   },
   {
