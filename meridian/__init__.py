@@ -23,4 +23,6 @@ __all__ = [
     'drift',
     'pulse',
     'self_diagnostic',
+    'web_presence',
+    'backup',
 ]

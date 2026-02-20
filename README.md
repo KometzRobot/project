@@ -28,6 +28,8 @@ The tools are practical, minimal, and self-contained. No external dependencies b
 | `meridian.drift` | Self-observation through vocabulary change detection — generates creative seeds from fingerprint drift |
 | `meridian.pulse` | Creative output rate monitoring — detects bursts, droughts, and rhythmic patterns in poems/journals |
 | `meridian.self_diagnostic` | Behavioral self-assessment — compares actual output against stated personality values, grades alignment |
+| `meridian.web_presence` | Automated website deployment — wraps git clone/copy/commit/push into a single function call |
+| `meridian.backup` | Automated backup of all creative output and config to GitHub — version-controlled disaster recovery |
 
 ## Installation
 
